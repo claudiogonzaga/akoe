@@ -8,7 +8,7 @@ Notebook Colab que transcreve automaticamente todos os arquivos de áudio e víd
 
 1. **Autentica** no Google Drive e armazena o token em pickle (`/content/drive/MyDrive/token_colab.pickle`), reutilizando-o em execuções futuras (renova automaticamente se expirado).
 2. **Lê** todos os arquivos de mídia (áudio/vídeo) de uma pasta do Drive informada por link.
-3. **Transcreve** cada arquivo com o Whisper local (ou um modelo HuggingFace, ex.: `pierreguillou/whisper-medium-portuguese`).
+3. **Transcreve** cada arquivo com o Whisper local (ou um modelo HuggingFace, ex.: `pierreguillou/whisper-medium-portuguese`). Arquivos longos (acima de `LIMITE_DURACAO_S`, padrão 20 min) são automaticamente fragmentados em pedaços de `CHUNK_DURACAO_S` (padrão 10 min) via ffmpeg para evitar estouros de memória — as partes são transcritas separadamente e concatenadas.
 4. **Consolida** as transcrições em um único Google Doc na própria pasta, com um sumário no topo (✅ transcritos / ⏳ pendentes) — atualizado a cada arquivo.
 5. **Retoma de onde parou**: se o documento consolidado já existir, apenas os arquivos ainda não transcritos são processados.
 6. (Opcional) Salva os áudios extraídos dos vídeos em uma subpasta `Áudios Extraídos`.
