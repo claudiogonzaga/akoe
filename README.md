@@ -12,6 +12,7 @@ Notebook Colab que transcreve automaticamente todos os arquivos de áudio e víd
 4. **Consolida** as transcrições em um único Google Doc na própria pasta, com um sumário no topo (✅ transcritos / ⏳ pendentes) — atualizado a cada arquivo.
 5. **Retoma de onde parou**: se o documento consolidado já existir, apenas os arquivos ainda não transcritos são processados.
 6. (Opcional) Salva os áudios extraídos dos vídeos em uma subpasta `Áudios Extraídos`.
+7. (Opcional) Move o arquivo original para a lixeira do Drive depois de transcrito (reversível por 30 dias — não é hard-delete).
 
 A transcrição segue um *prompt* de **transcritor jurídico**: integral, com identificação de interlocutores quando possível e marcação `[áudio ininteligível]` para trechos não compreendidos.
 
@@ -23,7 +24,8 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 4. Ajuste os parâmetros do formulário:
    - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3` ou um modelo HuggingFace (`org/modelo`).
    - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos.
-   - `ACAO_AUDIOS`: `Guardar áudios extraídos` ou `Apagar áudios extraídos`.
+   - `ACAO_ARQUIVO_ORIGINAL`: `Apagar` (move para a lixeira do Drive após transcrição bem-sucedida) ou `Manter`.
+   - `ACAO_AUDIO_EXTRAIDO`: `Salvar em "Áudios Extraídos"` ou `Não salvar` (aplicável apenas a vídeos).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
 
 ### Observações
