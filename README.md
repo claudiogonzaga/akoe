@@ -35,3 +35,30 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 - Se adicionar novos arquivos à pasta após uma execução, reexecute a célula (o notebook detecta automaticamente quais ainda faltam transcrever).
 - A célula final (limpeza de cache) só deve ser executada em caso de erro de memória da GPU.
 - O documento consolidado é nomeado `[modelo] Transcrições de <primeiro_arquivo> e outros`.
+
+---
+
+# 🔊 Gerar Áudios com Gemini (texto → MP3)
+
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/transcrevercomwhisper/blob/main/_gemini_2026_07__Gerar_Audios_de_Textos_de_1_Pasta_do_Drive.ipynb)
+
+Notebook irmão que faz o caminho **inverso**: transforma arquivos de **texto** (`.txt`, `.md` ou **Google Docs**) de uma pasta do Google Drive — ou enviados por **upload** — em **áudios narrados (MP3)** com a API **Gemini TTS**, devolvendo o MP3 **na mesma pasta do Drive** (ou para download, no modo upload).
+
+Serve para gerar **notas de áudio**, **notas de esclarecimento ao público**, **comunicados institucionais**, **boletins**, **aulas narradas** e **audiolivros** — o formulário permite escolher o tipo de conteúdo (ou escrever uma **instrução de narração personalizada**), a voz (8 vozes do Gemini), o tom, o ritmo, a velocidade final e a leitura pausada com silêncio entre frases.
+
+## O que o notebook faz
+
+1. **Lê** os arquivos de texto de uma pasta do Drive informada por link (ou recebe arquivos por upload, sem tocar no Drive).
+2. **Narra** cada texto com a API `gemini-2.5-flash-preview-tts`, fatiando textos longos por parágrafo/frase e mandando a mesma instrução de estilo em cada trecho (voz consistente do começo ao fim).
+3. **Normaliza o volume** entre os trechos, concatena tudo e codifica o **MP3** (ffmpeg, com ajuste de velocidade preservando o tom da voz).
+4. **Devolve o MP3 na mesma pasta** do Drive (textos que já têm MP3 são pulados — pode rodar de novo sem medo).
+5. **Retoma de onde parou**: os trechos gerados ficam em cache no seu Drive (`MyDrive/GerarAudioGemini/cache-trechos`) — se a cota diária da API esgotar no meio de um texto longo, basta rodar de novo no dia seguinte.
+
+## Como usar
+
+1. Clique no badge **Open in Colab** acima (não precisa de GPU).
+2. Crie uma chave **gratuita** da API Gemini em [aistudio.google.com/apikey](https://aistudio.google.com/apikey) e salve-a nos **Secrets** do Colab (ícone 🔑 na barra lateral) com o nome `GEMINI_API_KEY` — ou apenas cole a chave quando o notebook pedir.
+3. Preencha o formulário (modo de entrada, link da pasta, tipo de conteúdo, voz, tom, ritmo…) e execute a célula.
+4. No modo Drive, **autorize** o acesso na primeira execução (mesmo token pickle do notebook do Whisper).
+
+> A cota gratuita do Gemini TTS é pequena (poucas requisições por dia) — notas e comunicados curtos saem em uma rodada; textos muito longos podem precisar de mais de um dia, e a retomada por trecho cuida disso.
