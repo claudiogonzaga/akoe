@@ -1,6 +1,6 @@
 # Akoé
 
-[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/transcrevercomwhisper/blob/main/Akoe.ipynb)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/akoe/blob/main/Akoe.ipynb)
 
 Notebook Colab que transcreve automaticamente todos os arquivos de áudio e vídeo de uma pasta do Google Drive usando o modelo **Whisper** (OpenAI) ou modelos compatíveis do HuggingFace.
 
