@@ -22,10 +22,31 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 2. Em `Ambiente de execução → Alterar tipo de ambiente`, selecione **GPU** (recomendado para `large-v3`).
 3. Execute a célula principal e **autorize** o acesso ao Google Drive quando solicitado (a cada nova sessão do Colab).
 4. Ajuste os parâmetros do formulário:
-   - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3` ou um modelo HuggingFace (`org/modelo`).
+   - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3`, um modelo HuggingFace (`org/modelo`) ou `whisperx-large-v3 (experimental)` — ver abaixo.
    - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos. **O modo de entrada é automático**: com um link aqui, lê os arquivos dessa pasta; **em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
+
+### Carimbo de tempo
+
+Cada segmento sai prefixado pelo instante em que começa, no arquivo original:
+
+```
+[00:00:00] Bom dia, damos início à audiência.
+[00:12:34] Pode confirmar seu nome?
+```
+
+Os tempos vêm prontos do próprio modelo — **não há custo extra de processamento**. Em arquivos longos, que são fragmentados internamente, o tempo é deslocado para continuar coerente com o arquivo inteiro (o segundo fragmento começa em `00:10:00`, não em `00:00:00`).
+
+Para voltar ao parágrafo corrido sem tempos, mude `CARIMBO_TEMPO` para `False` no código (não é campo do formulário).
+
+### WhisperX (experimental)
+
+Selecionar `whisperx-large-v3 (experimental)` troca o motor. Por baixo é o mesmo Whisper, com três acréscimos: detecção de voz antes de transcrever (menos alucinação em silêncio), processamento em lote (mais rápido) e tempos mais precisos.
+
+⚠️ É **experimental** por um motivo concreto: o WhisperX é sensível às versões de `torch`/CUDA, que a Colab atualiza sem aviso. Pode falhar na instalação, exigir reiniciar o ambiente de execução, ou funcionar hoje e quebrar depois. Ele só é instalado se você selecionar essa opção — nos demais modelos nada muda. Se der errado, escolha um modelo comum (ex.: `large-v3`) e rode de novo.
+
+Diarização (separar quem falou: `SPEAKER_00`, `SPEAKER_01`) **não** está implementada.
 
 ### `ACAO_ARQUIVOS` — o que sobra depois de transcrever
 
