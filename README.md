@@ -25,7 +25,6 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
    - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3` ou um modelo HuggingFace (`org/modelo`).
    - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos. **O modo de entrada é automático**: com um link aqui, lê os arquivos dessa pasta; **em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
-   - `MASCARAR_SAIDAS`: mascara nomes de arquivos e IDs no log impresso (ver abaixo).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
 
 ### `ACAO_ARQUIVOS` — o que sobra depois de transcrever
@@ -52,7 +51,7 @@ Apagar move para a lixeira do Drive (reversível por 30 dias), não é exclusão
 As saídas de execução ficam salvas dentro do `.ipynb`. Como este repositório é público, há quatro camadas para que nomes de arquivos e IDs de pasta não vazem por ali:
 
 1. **Limpeza automática ao final**: terminada a transcrição, o notebook apaga todo o log de progresso e reimprime só o resumo com o link do documento. O log com nomes de arquivos deixa de existir na saída salva. (O documento já está na pasta do Drive, então o log não tem mais utilidade.)
-2. **`MASCARAR_SAIDAS = True`** (padrão): enquanto roda, o log mostra `25.………p4` em vez de `25.05.26 - Reunião - TAC concurso público.mp4`. Isso cobre o caso em que a execução é interrompida por um erro no meio — aí a limpeza final não chega a rodar. O Google Doc consolidado continua com os nomes completos: a máscara vale só para o que aparece na tela.
+2. **Máscara no log**: enquanto roda, o log mostra `25.………p4` em vez de `25.05.26 - Reunião - TAC concurso público.mp4`. Isso cobre o caso em que a execução é interrompida por um erro no meio — aí a limpeza final não chega a rodar. O Google Doc consolidado continua com os nomes completos: a máscara vale só para o que aparece na tela. Controlada pela variável `MASCARAR_SAIDAS` no código (não aparece no formulário); mude para `False` se quiser o log legível.
 3. **Hook de pre-commit**: zera as saídas de qualquer `.ipynb` antes de cada commit feito daqui. Ative uma vez por clone:
 
    ```bash
