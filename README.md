@@ -1,6 +1,4 @@
-<img src="akoe.png" width="140">
-
-# Akoé
+<img src="akoe-logo.png" width="340" alt="Akoé">
 
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/akoe/blob/main/Akoe.ipynb)
 
