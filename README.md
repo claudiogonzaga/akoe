@@ -1,12 +1,8 @@
-<img src="akoe.png" width="140" align="left" hspace="20" vspace="6">
+<img src="akoe.png" width="140">
 
 # Akoé
 
-*Do grego ἀκοή — «escuta».*
-
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/akoe/blob/main/Akoe.ipynb)
-
-<br clear="left">
 
 
 Notebook Colab que transcreve automaticamente todos os arquivos de áudio e vídeo de uma pasta do Google Drive usando o modelo **Whisper** (OpenAI) ou modelos compatíveis do HuggingFace.
