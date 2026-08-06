@@ -27,7 +27,6 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
    - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos.
    - `ACAO_ARQUIVO_ORIGINAL`: `Apagar` (move para a lixeira do Drive após transcrição bem-sucedida) ou `Manter`.
    - `ACAO_AUDIO_EXTRAIDO`: `Salvar em "Áudios Extraídos"` ou `Não salvar` (aplicável apenas a vídeos).
-   - `TIPO_DOCUMENTO`: `Mídias de audiência`, `Ata de reunião` ou `Outro` (default) — define o nome do documento consolidado.
    - `MASCARAR_SAIDAS`: mascara nomes de arquivos e IDs no log impresso (ver abaixo).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
 
@@ -39,16 +38,17 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 
 ### Privacidade das saídas
 
-As saídas de execução ficam salvas dentro do `.ipynb`. Como este repositório é público, há três camadas para que nomes de arquivos e IDs de pasta não vazem por ali:
+As saídas de execução ficam salvas dentro do `.ipynb`. Como este repositório é público, há quatro camadas para que nomes de arquivos e IDs de pasta não vazem por ali:
 
-1. **`MASCARAR_SAIDAS = True`** (padrão): o log impresso mostra `25.………p4` em vez de `25.05.26 - Reunião - TAC concurso público.mp4`. O Google Doc consolidado continua com os nomes completos — a máscara vale só para o que aparece na tela. Desligue se quiser o log legível.
-2. **Hook de pre-commit**: zera as saídas de qualquer `.ipynb` antes de cada commit feito daqui. Ative uma vez por clone:
+1. **Limpeza automática ao final**: terminada a transcrição, o notebook apaga todo o log de progresso e reimprime só o resumo com o link do documento. O log com nomes de arquivos deixa de existir na saída salva. (O documento já está na pasta do Drive, então o log não tem mais utilidade.)
+2. **`MASCARAR_SAIDAS = True`** (padrão): enquanto roda, o log mostra `25.………p4` em vez de `25.05.26 - Reunião - TAC concurso público.mp4`. Isso cobre o caso em que a execução é interrompida por um erro no meio — aí a limpeza final não chega a rodar. O Google Doc consolidado continua com os nomes completos: a máscara vale só para o que aparece na tela.
+3. **Hook de pre-commit**: zera as saídas de qualquer `.ipynb` antes de cada commit feito daqui. Ative uma vez por clone:
 
    ```bash
    git config core.hooksPath .githooks
    ```
 
-3. **Ao salvar do Colab direto para o GitHub** (`Arquivo → Salvar uma cópia no GitHub`), o hook **não** roda — ele é local. Nesse caminho, use antes `Editar → Limpar todas as saídas`. Se você nunca salva do Colab para o GitHub, esse caso não te afeta.
+4. **Ao salvar do Colab direto para o GitHub** (`Arquivo → Salvar uma cópia no GitHub`), o hook **não** roda — ele é local. Como a limpeza automática já removeu o log, o risco aqui é pequeno; em caso de execução interrompida por erro, use antes `Editar → Limpar todas as saídas`. Se você nunca salva do Colab para o GitHub, esse caso não te afeta.
 
 ---
 
