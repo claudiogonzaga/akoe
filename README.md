@@ -23,12 +23,23 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 3. Execute a célula principal e **autorize** o acesso ao Google Drive quando solicitado (a cada nova sessão do Colab).
 4. Ajuste os parâmetros do formulário:
    - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3` ou um modelo HuggingFace (`org/modelo`).
-   - `MODO_ENTRADA`: `Link da pasta do Drive` (padrão) ou `Upload de arquivos`.
-   - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos.
-   - `ACAO_ARQUIVO_ORIGINAL`: `Apagar` (move para a lixeira do Drive após transcrição bem-sucedida) ou `Manter`.
-   - `ACAO_AUDIO_EXTRAIDO`: `Salvar em "Áudios Extraídos"` ou `Não salvar` (aplicável apenas a vídeos).
+   - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos. **O modo de entrada é automático**: com um link aqui, lê os arquivos dessa pasta; **em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
+   - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
    - `MASCARAR_SAIDAS`: mascara nomes de arquivos e IDs no log impresso (ver abaixo).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
+
+### `ACAO_ARQUIVOS` — o que sobra depois de transcrever
+
+"Mídia original" é o áudio/vídeo que estava na pasta do Drive. "Áudio extraído" é o WAV 16 kHz mono gerado a partir de vídeos — guardá-lo cria uma cópia na subpasta `Áudios Extraídos`.
+
+| Opção | Mídia original | Áudio extraído |
+|---|---|---|
+| **Manter mídia original e apagar áudio eventualmente extraído** (padrão) | mantida | não guardado |
+| Apagar mídia original e manter áudio eventualmente extraído | vai p/ lixeira | guardado |
+| Apagar tudo depois de transcrever | vai p/ lixeira | não guardado |
+| Manter tudo depois de transcrever | mantida | guardado |
+
+Apagar move para a lixeira do Drive (reversível por 30 dias), não é exclusão definitiva. No modo upload nada disso se aplica: os arquivos ficam só no disco temporário do Colab.
 
 ### Observações
 
