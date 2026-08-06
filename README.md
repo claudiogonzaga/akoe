@@ -1,6 +1,13 @@
+<img src="akoe.png" width="140" align="left" hspace="20" vspace="6">
+
 # Akoé
 
+*Do grego ἀκοή — «escuta».*
+
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/akoe/blob/main/Akoe.ipynb)
+
+<br clear="left">
+
 
 Notebook Colab que transcreve automaticamente todos os arquivos de áudio e vídeo de uma pasta do Google Drive usando o modelo **Whisper** (OpenAI) ou modelos compatíveis do HuggingFace.
 
@@ -25,20 +32,23 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
    - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3`, um modelo HuggingFace (`org/modelo`) ou `whisperx-large-v3 (experimental)` — ver abaixo.
    - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos. **O modo de entrada é automático**: com um link aqui, lê os arquivos dessa pasta; **em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
+   - `CARIMBO_TEMPO`: de quanto em quanto tempo marcar o instante na transcrição (ver abaixo).
 5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
 
-### Carimbo de tempo
+### `CARIMBO_TEMPO` — carimbo de tempo
 
-Cada segmento sai prefixado pelo instante em que começa, no arquivo original:
+A transcrição é agrupada em blocos de duração fixa, cada um marcado pelo instante **cheio** em que o bloco começa — o que serve para localizar o trecho direto no áudio:
 
 ```
-[00:00:00] Bom dia, damos início à audiência.
-[00:12:34] Pode confirmar seu nome?
+[00:00:00] Bom dia, damos início à audiência. Presentes o Ministério Público
+e a defesa. Pode confirmar seu nome completo? Confirmo.
+
+[00:03:00] O senhor presenciou os fatos? Presenciei, sim.
 ```
 
-Os tempos vêm prontos do próprio modelo — **não há custo extra de processamento**. Em arquivos longos, que são fragmentados internamente, o tempo é deslocado para continuar coerente com o arquivo inteiro (o segundo fragmento começa em `00:10:00`, não em `00:00:00`).
+Opções: **a cada 1, 2, 3, 5 ou 10 minutos**; `Por segmento do modelo` (um carimbo por corte do Whisper — irregulares, de poucos segundos cada, o que fragmenta bastante o texto); ou `Sem carimbo de tempo` (parágrafo corrido). Padrão: a cada 3 minutos.
 
-Para voltar ao parágrafo corrido sem tempos, mude `CARIMBO_TEMPO` para `False` no código (não é campo do formulário).
+Os tempos vêm prontos do próprio modelo — **não há custo extra de processamento**. Blocos sem fala são omitidos. Em arquivos longos, que são fragmentados internamente, o tempo é deslocado para continuar coerente com o arquivo inteiro (o segundo fragmento começa em `00:10:00`, não em `00:00:00`).
 
 ### WhisperX (experimental)
 
