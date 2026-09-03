@@ -3,14 +3,14 @@
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/claudiogonzaga/akoe/blob/main/Akoe.ipynb)
 
 
-Notebook Colab que transcreve automaticamente todos os arquivos de áudio e vídeo de uma pasta do Google Drive usando o modelo **Whisper** (OpenAI) ou modelos compatíveis do HuggingFace.
+Notebook Colab que transcreve automaticamente todos os arquivos de áudio e vídeo de **até 5 pastas** do Google Drive usando o modelo **Whisper** (OpenAI) ou modelos compatíveis do HuggingFace.
 
 ## O que o notebook faz
 
 1. **Autentica** no Google Drive por sessão (`auth.authenticate_user()`), sem persistir token em disco.
-2. **Lê** todos os arquivos de mídia (áudio/vídeo) de uma pasta do Drive informada por link.
+2. **Lê** todos os arquivos de mídia (áudio/vídeo) de cada pasta do Drive informada por link — até 5, processadas em sequência.
 3. **Transcreve** cada arquivo com o Whisper local (ou um modelo HuggingFace, ex.: `pierreguillou/whisper-medium-portuguese`). Arquivos longos (acima de `LIMITE_DURACAO_S`, padrão 20 min) são automaticamente fragmentados em pedaços de `CHUNK_DURACAO_S` (padrão 10 min) via ffmpeg para evitar estouros de memória — as partes são transcritas separadamente e concatenadas.
-4. **Consolida** as transcrições em um único Google Doc na própria pasta, com um sumário no topo (✅ transcritos / ⏳ pendentes) — atualizado a cada arquivo.
+4. **Consolida** as transcrições de cada pasta em um Google Doc criado nela mesma, com um sumário no topo (✅ transcritos / ⏳ pendentes) — atualizado a cada arquivo.
 5. **Retoma de onde parou**: se o documento consolidado já existir, apenas os arquivos ainda não transcritos são processados.
 6. (Opcional) Salva os áudios extraídos dos vídeos em uma subpasta `Áudios Extraídos`.
 7. (Opcional) Move o arquivo original para a lixeira do Drive depois de transcrito (reversível por 30 dias — não é hard-delete).
@@ -24,10 +24,10 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 3. Execute a célula principal e **autorize** o acesso ao Google Drive quando solicitado (a cada nova sessão do Colab).
 4. Ajuste os parâmetros do formulário:
    - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3`, um modelo HuggingFace (`org/modelo`) ou `whisperx-large-v3 (experimental)` — ver abaixo.
-   - `PASTA_DOCUMENTOS`: link da pasta do Google Drive com os áudios/vídeos. **O modo de entrada é automático**: com um link aqui, lê os arquivos dessa pasta; **em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
+   - `PASTA_1` a `PASTA_5`: links das pastas do Google Drive com os áudios/vídeos. Preencha da primeira em diante; as que ficarem em branco são ignoradas, e a mesma pasta repetida é lida uma vez só. **O modo de entrada é automático**: com pelo menos um link, lê do Drive; com **todos em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
    - `CARIMBO_TEMPO`: de quanto em quanto tempo marcar o instante na transcrição (ver abaixo).
-5. Aguarde o término — o link do Google Doc consolidado é exibido ao final.
+5. Aguarde o término — ao final é exibido o link do Google Doc de cada pasta. Uma pasta que falhe (link inválido, sem permissão) não interrompe as demais: o erro aparece no resumo e as seguintes continuam.
 
 ### `CARIMBO_TEMPO` — carimbo de tempo
 
@@ -68,14 +68,13 @@ Apagar move para a lixeira do Drive (reversível por 30 dias), não é exclusão
 ### Observações
 
 - Se adicionar novos arquivos à pasta após uma execução, reexecute a célula (o notebook detecta automaticamente quais ainda faltam transcrever).
-- A célula final (limpeza de cache) só deve ser executada em caso de erro de memória da GPU.
 - O documento consolidado é nomeado `[modelo] Transcrições de <primeiro_arquivo> e outros`.
 
 ### Privacidade das saídas
 
 As saídas de execução ficam salvas dentro do `.ipynb`. Como este repositório é público, há quatro camadas para que nomes de arquivos e IDs de pasta não vazem por ali:
 
-1. **Limpeza automática ao final**: terminada a transcrição, o notebook apaga todo o log de progresso e reimprime só o resumo com o link do documento. O log com nomes de arquivos deixa de existir na saída salva. (O documento já está na pasta do Drive, então o log não tem mais utilidade.)
+1. **Limpeza automática ao final**: terminada a transcrição, o notebook apaga todo o log de progresso e reimprime só o resumo com os links dos documentos. O log com nomes de arquivos deixa de existir na saída salva. (O documento já está na pasta do Drive, então o log não tem mais utilidade.)
 2. **Máscara no log**: enquanto roda, o log mostra `25.………p4` em vez de `25.05.26 - Reunião - TAC concurso público.mp4`. Isso cobre o caso em que a execução é interrompida por um erro no meio — aí a limpeza final não chega a rodar. O Google Doc consolidado continua com os nomes completos: a máscara vale só para o que aparece na tela. Controlada pela variável `MASCARAR_SAIDAS` no código (não aparece no formulário); mude para `False` se quiser o log legível.
 3. **Hook de pre-commit**: zera as saídas de qualquer `.ipynb` antes de cada commit feito daqui. Ative uma vez por clone:
 
