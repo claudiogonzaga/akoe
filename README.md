@@ -66,7 +66,6 @@ Os dois rodam pelo [onnx-asr](https://github.com/istupakov/onnx-asr), instalado 
 - **Não inventa texto em silêncio.** O áudio passa antes por detecção de voz (Silero VAD), e só os trechos com fala vão ao modelo — a alucinação em laço descrita abaixo não tem onde nascer.
 - **Carimbo de tempo** funciona igual: cada trecho detectado traz seu início.
 - **GPU é usada se houver**; sem GPU, cai para CPU.
-- **Pontuação e maiúsculas** vêm do próprio modelo.
 - O TAGARELA **não tem versão int8** publicada — daí o download de 2,5 GB a cada nova sessão do Colab.
 
 ### Alucinação em laço do Whisper
