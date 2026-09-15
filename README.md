@@ -23,7 +23,7 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
 2. Em `Ambiente de execução → Alterar tipo de ambiente`, selecione **GPU** (recomendado para `large-v3`).
 3. Execute a célula principal e **autorize** o acesso ao Google Drive quando solicitado (a cada nova sessão do Colab).
 4. Ajuste os parâmetros do formulário:
-   - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3`, um modelo HuggingFace (`org/modelo`) ou `whisperx-large-v3 (experimental)` — ver abaixo.
+   - `modelo_whisper`: `tiny`, `base`, `small`, `medium`, `large`, `large-v2`, `large-v3`, um modelo HuggingFace (`org/modelo`), `whisperx-large-v3 (experimental)`, `parakeet-tdt-0.6b-v3` ou `parakeet-tdt-0.6b-v3-ptBR-TAGARELA` — ver abaixo.
    - `PASTA_1` a `PASTA_5`: links das pastas do Google Drive com os áudios/vídeos. Preencha da primeira em diante; as que ficarem em branco são ignoradas, e a mesma pasta repetida é lida uma vez só. **O modo de entrada é automático**: com pelo menos um link, lê do Drive; com **todos em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
    - `CARIMBO_TEMPO`: de quanto em quanto tempo marcar o instante na transcrição (ver abaixo).
@@ -51,6 +51,23 @@ Selecionar `whisperx-large-v3 (experimental)` troca o motor. Por baixo é o mesm
 ⚠️ É **experimental** por um motivo concreto: o WhisperX é sensível às versões de `torch`/CUDA, que a Colab atualiza sem aviso. Pode falhar na instalação, exigir reiniciar o ambiente de execução, ou funcionar hoje e quebrar depois. Ele só é instalado se você selecionar essa opção — nos demais modelos nada muda. Se der errado, escolha um modelo comum (ex.: `large-v3`) e rode de novo.
 
 Diarização (separar quem falou: `SPEAKER_00`, `SPEAKER_01`) **não** está implementada.
+
+### Parakeet (NVIDIA)
+
+Duas opções de uma família diferente de modelo — não é Whisper:
+
+| Opção | Download | Observação |
+|---|---|---|
+| `parakeet-tdt-0.6b-v3` | ~670 MB (int8) | Multilíngue (25 idiomas europeus, inclusive português). Leve, roda bem até em CPU. |
+| `parakeet-tdt-0.6b-v3-ptBR-TAGARELA` | ~2,5 GB (fp32) | Ajustado em ~9 mil horas de podcasts em português. Melhor em fala espontânea: no teste publicado pelos autores, 14,3% de erro contra 23,4% do Whisper large-v3 ([modelo](https://huggingface.co/alefiury/parakeet-tdt-0.6b-v3-ptBR-TAGARELA-onnx), [dataset](https://github.com/freds0/TAGARELA)). |
+
+Os dois rodam pelo [onnx-asr](https://github.com/istupakov/onnx-asr), instalado só quando uma dessas opções é escolhida. O TAGARELA foi publicado para esse runtime; usar o mesmo para os dois evita uma conversão para o sherpa-onnx que ninguém validou.
+
+- **Não inventa texto em silêncio.** O áudio passa antes por detecção de voz (Silero VAD), e só os trechos com fala vão ao modelo — a alucinação em laço descrita abaixo não tem onde nascer.
+- **Carimbo de tempo** funciona igual: cada trecho detectado traz seu início.
+- **GPU é usada se houver**; sem GPU, cai para CPU.
+- **Pontuação e maiúsculas** vêm do próprio modelo.
+- O TAGARELA **não tem versão int8** publicada — daí o download de 2,5 GB a cada nova sessão do Colab.
 
 ### Alucinação em laço do Whisper
 
