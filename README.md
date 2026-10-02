@@ -40,7 +40,7 @@ e a defesa. Pode confirmar seu nome completo? Confirmo.
 [00:03:00] O senhor presenciou os fatos? Presenciei, sim.
 ```
 
-Opções: **a cada 1, 2, 3, 5 ou 10 minutos**; `Por segmento do modelo` (um carimbo por corte do Whisper — irregulares, de poucos segundos cada, o que fragmenta bastante o texto); ou `Sem carimbo de tempo` (parágrafo corrido). Padrão: a cada 3 minutos.
+Opções: **a cada 1, 2, 3, 5 ou 10 minutos**; `Por segmento do modelo` (um carimbo por corte do Whisper — irregulares, de poucos segundos cada, o que fragmenta bastante o texto); ou `Sem carimbo de tempo` (parágrafo corrido). Padrão: a cada 1 minuto.
 
 Os tempos vêm prontos do próprio modelo — **não há custo extra de processamento**. Blocos sem fala são omitidos. Em arquivos longos, que são fragmentados internamente, o tempo é deslocado para continuar coerente com o arquivo inteiro (o segundo fragmento começa em `00:10:00`, não em `00:00:00`).
 
@@ -101,7 +101,8 @@ Apagar move para a lixeira do Drive (reversível por 30 dias), não é exclusão
 ### Observações
 
 - Se adicionar novos arquivos à pasta após uma execução, reexecute a célula (o notebook detecta automaticamente quais ainda faltam transcrever).
-- O documento consolidado é nomeado `[modelo] Transcrições de <primeiro_arquivo> e outros`.
+- O documento consolidado é nomeado `[akoe_<modelo>] Transcrições de <primeiro_arquivo> e outros` — por exemplo `[akoe_large-v3] Transcrições de audiencia.mp4 e outros`. Como o nome do modelo entra no título, cada modelo gera seu próprio documento na pasta.
+- Documentos criados antes, no formato `[modelo] Transcrições de …` (sem `akoe_`), continuam sendo reconhecidos: a retomada encontra o documento da pasta e não retranscreve o que já estava pronto.
 
 ### Privacidade das saídas
 
