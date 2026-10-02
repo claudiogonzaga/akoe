@@ -85,8 +85,7 @@ Apagar move para a lixeira do Drive (reversível por 30 dias), não é exclusão
 ### Observações
 
 - Se adicionar novos arquivos à pasta após uma execução, reexecute a célula (o notebook detecta automaticamente quais ainda faltam transcrever).
-- O documento consolidado é nomeado `[akoe_<modelo>] Transcrições de <primeiro_arquivo> e outros` — por exemplo `[akoe_large-v3] Transcrições de audiencia.mp4 e outros`. Como o nome do modelo entra no título, cada modelo gera seu próprio documento na pasta.
-- Documentos criados antes, no formato `[modelo] Transcrições de …` (sem `akoe_`), continuam sendo reconhecidos: a retomada encontra o documento da pasta e não retranscreve o que já estava pronto.
+- O documento consolidado é nomeado `[modelo] Transcrições de <primeiro_arquivo> e outros` — por exemplo `[large-v3] Transcrições de audiencia.mp4 e outros`. Como o nome do modelo entra no título, cada modelo gera seu próprio documento na pasta.
 
 ### Privacidade das saídas
 
