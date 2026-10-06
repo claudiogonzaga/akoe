@@ -29,6 +29,7 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
    - `CARIMBO_TEMPO`: de quanto em quanto tempo marcar o instante na transcrição (ver abaixo).
    - `GERAR_ATA` + `LINK_TEMPLATE_ATA`: monta o documento da ata a partir de um Doc modelo (ver abaixo).
    - `REDIGIR_ATA_COM_LLM`: redige a ata no próprio Colab, com um modelo aberto (ver abaixo).
+   - `ESQUECER_ESCOLHAS_GUARDADAS`: apaga as escolhas da última vez (ver abaixo).
 5. Aguarde o término — ao final é exibido o link do Google Doc de cada pasta. Uma pasta que falhe (link inválido, sem permissão) não interrompe as demais: o erro aparece no resumo e as seguintes continuam.
 
 ### `CARIMBO_TEMPO` — carimbo de tempo
@@ -79,15 +80,29 @@ Marcando `GERAR_ATA` e colando o link de um Google Doc modelo em `LINK_TEMPLATE_
 
 O modelo precisa ter o marcador `[[TRANSCRICAO_BRUTA]]` — sem ele o documento é criado, mas a transcrição não é anexada, e o log avisa. O Akoé também preenche `[[ORIGEM_TRANSCRICAO]]`, com o nome do modelo usado. Os demais marcadores do seu template (data, participantes, número do procedimento) ficam como estão, para a IA ou para quem lavra a ata resolver — o Akoé não tem como saber esses dados e não inventa.
 
-**O link do modelo fica guardado na sua conta.** Na primeira vez que você cola o link em `LINK_TEMPLATE_ATA`, o Akoé o grava em `Meu Drive/Akoe/preferencias.json`; nas próximas, com `GERAR_ATA` marcado e o campo em branco, ele usa o que está guardado. Um link novo colado no campo substitui o antigo. Como é o Drive que guarda, vale em qualquer computador onde você entre com a mesma conta Google — e, ao contrário do que ficaria no notebook, não vai para o GitHub. Para esquecer, apague o arquivo. Se o Drive estiver indisponível ou sem permissão de escrita, o recurso só deixa de funcionar: a transcrição segue normalmente.
-
-Só o link do modelo é guardado: as pastas mudam a cada uso, e os demais campos (modelo, ação nos arquivos, carimbo, caixas de marcar) não têm como distinguir "deixei no padrão" de "escolhi o padrão", então um valor guardado acabaria vencendo uma escolha sua sem você perceber.
+**O link do modelo fica guardado na sua conta** — ver [Escolhas guardadas](#escolhas-guardadas): na primeira vez, cole o link; nas próximas, com `GERAR_ATA` marcado, pode deixar o campo em branco.
 
 **`REDIGIR_ATA_COM_LLM` (opcional)** dispensa o Gemini: baixa o `Qwen/Qwen2.5-7B-Instruct` em 4 bits e redige a ata no próprio Colab, criando um segundo documento `(redigida pela IA)` na pasta. Três coisas a saber:
 
 - Roda **depois** de toda a transcrição, nunca junto: o Whisper e o modelo de texto não cabem juntos na memória da T4, então o Whisper é descarregado antes.
 - Transcrições longas não cabem na janela do modelo (o teto é 28 mil tokens, algo como 1 h a 1 h 30 de fala). Acima disso ele avisa e deixa o documento para o Gemini, em vez de cortar a transcrição pela metade.
 - A qualidade fica bem abaixo da do Gemini. O documento para subir no Gemini continua sendo montado de qualquer forma.
+
+### Escolhas guardadas
+
+O Colab não tem cookies — o código roda numa VM, longe do navegador. O que acompanha o login do Google é o Drive, que o notebook já monta: o Akoé guarda um arquivo pequeno em `Meu Drive/Akoe/preferencias.json`, e ele vale em qualquer computador onde você entre com a mesma conta. Nada disso vai para o GitHub.
+
+Ficam guardados: o **link do modelo de ata**, o **modelo** (`modelo_whisper`), a **ação nos arquivos** e o **carimbo de tempo**. Quando você roda de novo:
+
+- **Campo que você mudou** no formulário vale, e passa a ser o guardado.
+- **Campo que você deixou no padrão** recebe o valor guardado, e o log avisa quais foram aplicados.
+- **Link do modelo de ata em branco** usa o guardado, mas só se `GERAR_ATA` estiver marcado.
+
+Não são guardadas as pastas (mudam a cada uso) nem as caixas de marcar (`GERAR_ATA`, `REDIGIR_ATA_COM_LLM`): com uma caixa, "desmarcada" é o padrão, então um `GERAR_ATA` guardado como marcado nunca poderia ser desmarcado.
+
+**Voltar ao padrão de propósito:** o código só consegue distinguir "deixei no padrão" de "escolhi o padrão" olhando se o campo mudou — então, se você guardou `large-v2` e quer `large-v3` de volta, escolher `large-v3` no formulário não basta, porque ele vale como "padrão" e o guardado vence. Marque `ESQUECER_ESCOLHAS_GUARDADAS` por uma execução: ele ignora o que estava guardado, usa o formulário e guarda o novo estado. Também dá para apagar o arquivo no Drive.
+
+Se o Drive estiver indisponível ou sem permissão de escrita, o recurso só deixa de funcionar: a transcrição segue normalmente.
 
 ### `ACAO_ARQUIVOS` — o que sobra depois de transcrever
 
