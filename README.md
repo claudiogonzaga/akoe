@@ -27,6 +27,8 @@ A transcrição segue um *prompt* de **transcritor jurídico**: integral, com id
    - `PASTA_1` a `PASTA_5`: links das pastas do Google Drive com os áudios/vídeos. Preencha da primeira em diante; as que ficarem em branco são ignoradas, e a mesma pasta repetida é lida uma vez só. **O modo de entrada é automático**: com pelo menos um link, lê do Drive; com **todos em branco, abre o seletor de upload** do seu computador (nesse caso nada toca o Drive e a transcrição é baixada de volta ao final).
    - `ACAO_ARQUIVOS`: o que fazer depois de transcrever — quatro combinações entre manter/apagar a mídia original e manter/apagar o áudio extraído (ver tabela abaixo).
    - `CARIMBO_TEMPO`: de quanto em quanto tempo marcar o instante na transcrição (ver abaixo).
+   - `GERAR_ATA` + `LINK_TEMPLATE_ATA`: monta o documento da ata a partir de um Doc modelo (ver abaixo).
+   - `REDIGIR_ATA_COM_LLM`: redige a ata no próprio Colab, com um modelo aberto (ver abaixo).
 5. Aguarde o término — ao final é exibido o link do Google Doc de cada pasta. Uma pasta que falhe (link inválido, sem permissão) não interrompe as demais: o erro aparece no resumo e as seguintes continuam.
 
 ### `CARIMBO_TEMPO` — carimbo de tempo
@@ -68,6 +70,20 @@ Duas medidas contra isso:
 2. **Colapso de repetições** na montagem do texto, como rede de proteção: trechos repetidos três vezes ou mais em sequência viram uma ocorrência só, e o log avisa quantos foram afetados. A fala normal não é tocada — inclusive repetições legítimas como "não, não, não foi isso".
 
 Se ainda aparecer em gravações muito ruidosas, o `whisperx-large-v3 (experimental)` tende a se sair melhor: ele detecta voz e descarta o silêncio **antes** de transcrever, que é justamente onde a alucinação nasce.
+
+### Ata de audiência ou reunião
+
+Marcando `GERAR_ATA` e colando o link de um Google Doc modelo em `LINK_TEMPLATE_ATA`, o Akoé monta na pasta, ao final de cada transcrição, um documento `ATA — <arquivo> (para a IA)`: uma cópia do modelo, com a transcrição anexada no lugar do marcador `[[TRANSCRICAO_BRUTA]]`.
+
+É a mesma mecânica do **Graphé**: o documento reúne o prompt, o template e a transcrição, e **você o sobe no Gemini ou no Copilot**, que redigem a ata. O Akoé não envia nada para IA nenhuma nesse caminho.
+
+O modelo precisa ter o marcador `[[TRANSCRICAO_BRUTA]]` — sem ele o documento é criado, mas a transcrição não é anexada, e o log avisa. O Akoé também preenche `[[ORIGEM_TRANSCRICAO]]`, com o nome do modelo usado. Os demais marcadores do seu template (data, participantes, número do procedimento) ficam como estão, para a IA ou para quem lavra a ata resolver — o Akoé não tem como saber esses dados e não inventa.
+
+**`REDIGIR_ATA_COM_LLM` (opcional)** dispensa o Gemini: baixa o `Qwen/Qwen2.5-7B-Instruct` em 4 bits e redige a ata no próprio Colab, criando um segundo documento `(redigida pela IA)` na pasta. Três coisas a saber:
+
+- Roda **depois** de toda a transcrição, nunca junto: o Whisper e o modelo de texto não cabem juntos na memória da T4, então o Whisper é descarregado antes.
+- Transcrições longas não cabem na janela do modelo (o teto é 28 mil tokens, algo como 1 h a 1 h 30 de fala). Acima disso ele avisa e deixa o documento para o Gemini, em vez de cortar a transcrição pela metade.
+- A qualidade fica bem abaixo da do Gemini. O documento para subir no Gemini continua sendo montado de qualquer forma.
 
 ### `ACAO_ARQUIVOS` — o que sobra depois de transcrever
 
