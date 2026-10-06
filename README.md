@@ -79,6 +79,10 @@ Marcando `GERAR_ATA` e colando o link de um Google Doc modelo em `LINK_TEMPLATE_
 
 O modelo precisa ter o marcador `[[TRANSCRICAO_BRUTA]]` — sem ele o documento é criado, mas a transcrição não é anexada, e o log avisa. O Akoé também preenche `[[ORIGEM_TRANSCRICAO]]`, com o nome do modelo usado. Os demais marcadores do seu template (data, participantes, número do procedimento) ficam como estão, para a IA ou para quem lavra a ata resolver — o Akoé não tem como saber esses dados e não inventa.
 
+**O link do modelo fica guardado na sua conta.** Na primeira vez que você cola o link em `LINK_TEMPLATE_ATA`, o Akoé o grava em `Meu Drive/Akoe/preferencias.json`; nas próximas, com `GERAR_ATA` marcado e o campo em branco, ele usa o que está guardado. Um link novo colado no campo substitui o antigo. Como é o Drive que guarda, vale em qualquer computador onde você entre com a mesma conta Google — e, ao contrário do que ficaria no notebook, não vai para o GitHub. Para esquecer, apague o arquivo. Se o Drive estiver indisponível ou sem permissão de escrita, o recurso só deixa de funcionar: a transcrição segue normalmente.
+
+Só o link do modelo é guardado: as pastas mudam a cada uso, e os demais campos (modelo, ação nos arquivos, carimbo, caixas de marcar) não têm como distinguir "deixei no padrão" de "escolhi o padrão", então um valor guardado acabaria vencendo uma escolha sua sem você perceber.
+
 **`REDIGIR_ATA_COM_LLM` (opcional)** dispensa o Gemini: baixa o `Qwen/Qwen2.5-7B-Instruct` em 4 bits e redige a ata no próprio Colab, criando um segundo documento `(redigida pela IA)` na pasta. Três coisas a saber:
 
 - Roda **depois** de toda a transcrição, nunca junto: o Whisper e o modelo de texto não cabem juntos na memória da T4, então o Whisper é descarregado antes.
